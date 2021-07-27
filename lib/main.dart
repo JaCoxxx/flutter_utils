@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_utils/common/main_theme_data.dart';
 import 'package:flutter_utils/pages/main/my_app.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   if (Platform.isAndroid) {
@@ -12,5 +14,6 @@ void main() {
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
   }
+  MainThemeData.init(MainThemeData.lightTheme);
   runApp(MyApp());
 }
