@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_utils/common/main_theme_data.dart';
@@ -15,5 +16,8 @@ void main() {
     // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
   }
   MainThemeData.init(MainThemeData.lightTheme);
+
+  AudioPlayer.logEnabled = true;
+
   runApp(MyApp());
 }

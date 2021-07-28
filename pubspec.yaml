@@ -19,7 +19,6 @@ dependencies:
   path_provider: ^2.0.2
   platform: ^3.0.0
   video_player: ^2.1.10
-#  flutter_sound: ^8.2.0
   chewie: ^1.2.2
   responsive_framework: ^0.1.4
   uuid: ^3.0.4
@@ -32,9 +31,10 @@ dependencies:
   archive: ^3.1.2
   webview_flutter: ^2.0.10
   jaguar_flutter_asset: ^3.0.0
+#  audioplayers: ^0.19.1
 
-  flutter_sound:
-    path: ./plugins/flutter_sound-8.2.0
+  audioplayers:
+    path: ./plugins/audioplayers-0.19.1
 
 dev_dependencies:
   flutter_test:
