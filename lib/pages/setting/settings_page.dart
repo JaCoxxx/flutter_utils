@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
-import 'package:hidden_drawer_menu/hidden_drawer_menu.dart';
-import 'package:settings_ui/settings_ui.dart';
 
 GlobalKey<SliderMenuContainerState> _key =
 new GlobalKey<SliderMenuContainerState>();

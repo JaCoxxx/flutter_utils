@@ -97,7 +97,7 @@ class CustomListItem extends StatelessWidget {
 
     IconThemeData? iconThemeData;
     TextStyle? leadingAndTrailingTextStyle;
-    if (leading != null || trailing != null) {
+    if (leading != null || trailing != null || needDefaultTrailing == true) {
       iconThemeData = IconThemeData(color: _iconColor(theme, tileTheme));
       leadingAndTrailingTextStyle = _trailingAndLeadingTextStyle(theme, tileTheme);
     }

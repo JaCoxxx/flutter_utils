@@ -36,7 +36,7 @@ class WAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Color? backColor;
 
   /// 左侧返回按钮点击事件
-  final Function? onClickBackBtn;
+  final void Function()? onClickBackBtn;
 
   /// 右侧操作组件
   final Widget? rightAction;
@@ -133,7 +133,7 @@ class _WAppBarState extends State<WAppBar> {
                     ? widget.backColor
                     : Colors.black,
                 onPressed: widget.onClickBackBtn != null
-                    ? widget.onClickBackBtn!()
+                    ? widget.onClickBackBtn
                     : () {
                         Get.back();
                       },

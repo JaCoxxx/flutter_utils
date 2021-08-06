@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_utils/common/main_theme_data.dart';
 import 'package:flutter_utils/pages/main/my_app.dart';
+import 'package:flutter_utils/utils/request.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
@@ -18,6 +19,8 @@ void main() {
   MainThemeData.init(MainThemeData.lightTheme);
 
   AudioPlayer.logEnabled = true;
+
+  Request().setEnableDebugPrint(true);
 
   runApp(MyApp());
 }

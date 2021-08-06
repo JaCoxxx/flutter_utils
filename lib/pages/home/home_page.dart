@@ -25,6 +25,22 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     menuList.addAll([
       {
+        'title': '博客',
+        'path': '/blog',
+      },
+      {
+        'title': 'CSDN',
+        'path': '/csdn-list',
+      },
+      {
+        'title': '豆瓣',
+        'path': '/douban-list',
+      },
+      {
+        'title': '聚合数据',
+        'path': '/juhe-list',
+      },
+      {
         'title': '音乐播放器',
         'path': '/audio-play',
       },

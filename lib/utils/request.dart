@@ -11,8 +11,8 @@ class Request {
   CancelToken _cancelToken = CancelToken();
   Dio _dio = Dio();
 
-  String accessToken = '';
-  String baseUrl = '';
+  String? accessToken = '';
+  String? baseUrl = '';
   bool enableDebugPrint = true;
 
   final requestConfig = {
@@ -25,10 +25,10 @@ class Request {
   }
 
   Future init(String? baseUrl, String? accessToken) async {
-    this.baseUrl = baseUrl!;
-    this.accessToken = accessToken!;
-    _dio.options.baseUrl = this.baseUrl;
-    _dio.options.headers['Authorization'] = '$accessToken';
+    this.baseUrl = baseUrl ?? '';
+    this.accessToken = accessToken ?? '';
+    _dio.options.baseUrl = this.baseUrl ?? '';
+    _dio.options.headers['Authorization'] = '${accessToken ?? ''}';
   }
 
   // 私有构造
@@ -126,26 +126,24 @@ class Request {
 │header: ${request.headers}${request.data != null ? "\n│body: " + (request.data is FormData ? request.data.fields.map((k) => "${k.key}:${k.value}").toList().toString() + request.data.files.map((k) => "(filename:${k.value.filename},length:${k.value.length})").toList().toString() : request.data.toString()) : ''}''';
       print("┌────────────────────────────────────────────────────────");
       print(requestStr);
-      if (response != null) {
-        String responseData = (response.data is Map || response.data is List)
-            ? jsonEncode(
-            response.data ?? (response.data is Map ? Map() : List.empty()))
-            : "${response.data}";
-        String responseStr = response != null
-            ? "[Response] Code:${response.statusCode} Length:${responseData.length}\n│$responseData"
-            : '';
-        print("├────────────────────────────────────────────────────────");
-        if (responseStr.length > maxLineCount) {
-          for (int i = 0; i < responseStr.length; i += maxLineCount) {
-            if (i + maxLineCount > responseStr.length) {
-              print("│" + responseStr.substring(i, responseStr.length));
-            } else {
-              print("│" + responseStr.substring(i, i + maxLineCount));
-            }
+      String responseData = (response.data is Map || response.data is List)
+          ? jsonEncode(
+              response.data ?? (response.data is Map ? Map() : List.empty()))
+          : "${response.data}";
+      String responseStr = response != null
+          ? "[Response] Code:${response.statusCode} Length:${responseData.length}\n│$responseData"
+          : '';
+      print("├────────────────────────────────────────────────────────");
+      if (responseStr.length > maxLineCount) {
+        for (int i = 0; i < responseStr.length; i += maxLineCount) {
+          if (i + maxLineCount > responseStr.length) {
+            print("│" + responseStr.substring(i, responseStr.length));
+          } else {
+            print("│" + responseStr.substring(i, i + maxLineCount));
           }
-        } else {
-          print(responseStr);
         }
+      } else {
+        print(responseStr);
       }
       if (error != null) {
         print("├────────────────────────────────────────────────────────");
@@ -165,13 +163,13 @@ class Request {
 // get请求
   Future get(String path,
       {token: true,
-        ResponseType? responseType,
-        String? contentType,
-        int? sendTimeout,
-        int? receiveTimeout,
-        Map<String, dynamic>? headers,
-        ProgressCallback? onReceiveProgress,
-        cancelToken}) {
+      ResponseType? responseType,
+      String? contentType,
+      int? sendTimeout,
+      int? receiveTimeout,
+      Map<String, dynamic>? headers,
+      ProgressCallback? onReceiveProgress,
+      cancelToken}) {
     return _get(
         path,
         token,
@@ -198,7 +196,7 @@ class Request {
     try {
       response = await _dio.get(
         path,
-        options: _getOptions(token, responseType!, contentType!,
+        options: _getOptions(token, responseType, contentType,
             sendTimeout: sendTimeout,
             receiveTimeout: receiveTimeout,
             headers: headers),
@@ -215,14 +213,14 @@ class Request {
 
   Future post(String path, dynamic data,
       {Options? options,
-        token = true,
-        ResponseType? responseType,
-        String? contentType,
-        int? sendTimeout,
-        int? receiveTimeout,
-        Map<String, dynamic>? headers,
-        cancelToken,
-        ProgressCallback? onReceiveProgress}) async {
+      token = true,
+      ResponseType? responseType,
+      String? contentType,
+      int? sendTimeout,
+      int? receiveTimeout,
+      Map<String, dynamic>? headers,
+      cancelToken,
+      ProgressCallback? onReceiveProgress}) async {
     return _post(
         path,
         data,
@@ -231,7 +229,9 @@ class Request {
         responseType!,
         contentType!,
         sendTimeout != null ? sendTimeout : requestConfig['sendTimeout'],
-        receiveTimeout != null ? receiveTimeout : requestConfig['receiveTimeout'],
+        receiveTimeout != null
+            ? receiveTimeout
+            : requestConfig['receiveTimeout'],
         headers!,
         cancelToken ?? _cancelToken,
         onReceiveProgress!);
@@ -270,14 +270,14 @@ class Request {
 // put请求
   Future put(String path, dynamic data,
       {Options? options,
-        token = true,
-        ResponseType? responseType,
-        String? contentType,
-        int? sendTimeout,
-        int? receiveTimeout,
-        Map<String, dynamic>? headers,
-        cancelToken,
-        ProgressCallback? onReceiveProgress}) async {
+      token = true,
+      ResponseType? responseType,
+      String? contentType,
+      int? sendTimeout,
+      int? receiveTimeout,
+      Map<String, dynamic>? headers,
+      cancelToken,
+      ProgressCallback? onReceiveProgress}) async {
     return _put(
         path,
         data,
@@ -325,17 +325,17 @@ class Request {
 // delete请求
 
   Future delete(
-      String path,
-      dynamic data, {
-        Options? options,
-        token = true,
-        ResponseType? responseType,
-        String? contentType,
-        int? sendTimeout,
-        int? receiveTimeout,
-        Map<String, dynamic>? headers,
-        cancelToken,
-      }) async {
+    String path,
+    dynamic data, {
+    Options? options,
+    token = true,
+    ResponseType? responseType,
+    String? contentType,
+    int? sendTimeout,
+    int? receiveTimeout,
+    Map<String, dynamic>? headers,
+    cancelToken,
+  }) async {
     return _delete(
         path,
         data,
@@ -379,13 +379,13 @@ class Request {
 
   // 设置请求参数
   Options _getOptions(
-      token,
-      ResponseType responseType,
-      String contentType, {
-        int? sendTimeout,
-        int? receiveTimeout,
-        Map<String, dynamic>? headers,
-      }) {
+    token,
+    ResponseType? responseType,
+    String? contentType, {
+    int? sendTimeout,
+    int? receiveTimeout,
+    Map<String, dynamic>? headers,
+  }) {
     Options options = Options();
     if (responseType != null) options.responseType = responseType;
     if (contentType != null) options.contentType = contentType;

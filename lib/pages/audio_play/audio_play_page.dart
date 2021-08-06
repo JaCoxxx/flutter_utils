@@ -52,17 +52,17 @@ class _AudioPlayPageState extends State<AudioPlayPage> {
               OutlinedButton(
                 child: Text('切换播放状态'),
                 onPressed: () async {
-                  // if (_audioPlayer.state == PlayerState.PLAYING) {
-                  //   int pauseResult = await _audioPlayer.pause();
-                  //   if (pauseResult != 1) {
-                  //     print(pauseResult);
-                  //   }
-                  // } else if (_audioPlayer.state == PlayerState.PAUSED) {
-                  //   int resumeResult = await _audioPlayer.resume();
-                  //   if (resumeResult != 1) {
-                  //     print(resumeResult);
-                  //   }
-                  // }
+                  if (_audioPlayer.state == PlayerState.PLAYING) {
+                    int pauseResult = await _audioPlayer.pause();
+                    if (pauseResult != 1) {
+                      print(pauseResult);
+                    }
+                  } else if (_audioPlayer.state == PlayerState.PAUSED) {
+                    int resumeResult = await _audioPlayer.resume();
+                    if (resumeResult != 1) {
+                      print(resumeResult);
+                    }
+                  }
                 },
               )
             ],
