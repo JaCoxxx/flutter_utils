@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:flutter_utils/common/dimens.dart';
+import 'package:flutter_utils/pages/home/slide_menu_widget.dart';
 import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
 import 'package:flutter_utils/widget/list_item_widget.dart';
 import 'package:flutter_utils/widget/widgets.dart';
@@ -41,6 +42,10 @@ class _HomePageState extends State<HomePage> {
         'path': '/juhe-list',
       },
       {
+        'title': '游戏',
+        'path': '/games-list',
+      },
+      {
         'title': '音乐播放器',
         'path': '/audio-play',
       },
@@ -54,7 +59,7 @@ class _HomePageState extends State<HomePage> {
       },
       {
         'title': 'webView',
-        'path': '/web-view',
+        'path': '/webview-test',
       },
     ]);
   }
@@ -77,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                 fontSize: Dimens.font_size_18, fontWeight: FontWeight.w600),
           ),
           sliderMain: _buildSlideMain(),
-          sliderMenu: _buildSlideMenu(),
+          sliderMenu: SlideMenuWidget(),
         ),
       ),
     );
@@ -118,37 +123,6 @@ class _HomePageState extends State<HomePage> {
         onTap: () {
           Get.toNamed(item['path']);
         },
-      ),
-    );
-  }
-
-  Widget _buildSlideMenu() {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 160,
-            child: Center(
-              child: DrawerHeader(
-                  child: CircleAvatar(
-                child: Text('吴'),
-              )),
-            ),
-          ),
-          CustomListItem(
-            title: Container(
-              child: Text('设置'),
-            ),
-            leading: Container(
-              child: Icon(Icons.settings),
-            ),
-            onTap: () {
-              Get.toNamed('/setting');
-            },
-          ),
-        ],
       ),
     );
   }

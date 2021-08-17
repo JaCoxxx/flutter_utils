@@ -87,5 +87,7 @@ class CustomWebView extends StatelessWidget {
     print(error.errorCode);
     print(error.errorType);
     print(error.failingUrl);
+    dismissLoading();
+    showToast('$initialUrl加载失败，请检查网络或稍后重试');
   }
 }

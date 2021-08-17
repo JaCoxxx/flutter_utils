@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_utils/common/constants.dart';
 import 'package:flutter_utils/common/dimens.dart';
+import 'package:flutter_utils/widget/custom_divider.dart';
+import 'package:flutter_utils/widget/list_item_widget.dart';
 import 'package:get/get.dart';
 
 /// 显示loading
@@ -10,9 +12,7 @@ void showLoading({String? msg, Color msgColor = Colors.white}) {
   BotToast.showCustomLoading(
       toastBuilder: (_) => Container(
             padding: const EdgeInsets.all(15),
-            decoration: const BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.all(Radius.circular(8))),
+            decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(8))),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -23,8 +23,7 @@ void showLoading({String? msg, Color msgColor = Colors.white}) {
                 if (msg != null)
                   Text(
                     msg,
-                    style: TextStyle(
-                        fontSize: Dimens.font_size_16, color: msgColor),
+                    style: TextStyle(fontSize: Dimens.font_size_16, color: msgColor),
                   ),
               ],
             ),
@@ -32,12 +31,10 @@ void showLoading({String? msg, Color msgColor = Colors.white}) {
 }
 
 /// 显示toast
-void showToast(String text,
-    {bool isLong = false, bool clickClose = false, bool onlyOne = false}) {
+void showToast(String text, {bool isLong = false, bool clickClose = false, bool onlyOne = false}) {
   BotToast.showText(
     text: text,
-    duration:
-        isLong ? Duration(milliseconds: 4000) : Duration(milliseconds: 2000),
+    duration: isLong ? Duration(milliseconds: 4000) : Duration(milliseconds: 2000),
     clickClose: clickClose,
     onlyOne: onlyOne,
   );
@@ -107,38 +104,66 @@ Future<T?> showSimpleAlertDialog<T>(
       });
 }
 
-showBottomDialog(BuildContext context) {
+showBottomMenuDialog(BuildContext context, List menuList, void Function(int, String) onTapMenu) {
   showModalBottomSheet(
       context: context,
       elevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+      ),
+      backgroundColor: Colors.white,
       builder: (_) {
-        return BottomSheet(
-            enableDrag: false,
-            onClosing: () {},
-            builder: (_) {
-              return GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: 12,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 2,
-                  ),
-                  itemBuilder: (_, index) {
-                    return Center(
-                      child: RawMaterialButton(
-                        child: Text(
-                          (index + 1).toString(),
+        return Container(
+          height: 46 * (menuList.length + 1) + 3 + 4 + MediaQuery.of(context).padding.bottom,
+          padding: EdgeInsets.only(top: 0, bottom: MediaQuery.of(context).padding.bottom),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: Constants.backgroundColor,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+          ),
+          child: Column(
+            children: [
+              MediaQuery.removePadding(
+                context: context,
+                removeBottom: true,
+                removeTop: true,
+                child: ListView.separated(
+                  itemBuilder: (_, index) => GestureDetector(
+                    onTap: () {
+                      Get.back();
+                      onTapMenu(index, menuList[index]['key']);
+                    },
+                    child: Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: Dimens.pd12),
+                        child: Center(
+                            child: Text(
+                              menuList[index]['title'],
                           style: TextStyle(
-                              color: Colors.black,
-                              fontSize: Dimens.font_size_16),
-                        ),
-                        onPressed: () {
-                          print(index + 1);
-                        },
-                      ),
-                    );
-                  });
-            });
+                              color: Colors.black, fontSize: Dimens.font_size_16, fontWeight: FontWeight.w300),
+                        ))),
+                  ),
+                  separatorBuilder: (_, index) => CustomDivider(),
+                  itemCount: menuList.length,
+                  shrinkWrap: true,
+                ),
+              ),
+              Dimens.hGap4,
+              GestureDetector(
+                onTap: () {
+                  Get.back();
+                },
+                child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: Dimens.pd12),
+                    child: Center(
+                        child: Text(
+                      '取消',
+                      style: TextStyle(color: Colors.black, fontSize: Dimens.font_size_16, fontWeight: FontWeight.w300),
+                    ))),
+              ),
+            ],
+          ),
+        );
       });
 }

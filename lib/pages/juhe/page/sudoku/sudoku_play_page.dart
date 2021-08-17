@@ -64,11 +64,10 @@ class _SudokuPlayPageState extends State<SudokuPlayPage> {
         print(result);
         _playData
           ..clear()
-          ..addAll(result['puzzle']
-              .asMap()
-              .keys
-              .map<List<SudokuDetailModel>>((e) {
-            List<int> gridValue = result['puzzle'][e].map<int>((item) => item as int).toList();
+          ..addAll(
+              result['puzzle'].asMap().keys.map<List<SudokuDetailModel>>((e) {
+            List<int> gridValue =
+                result['puzzle'][e].map<int>((item) => item as int).toList();
             return gridValue.asMap().keys.map<SudokuDetailModel>((ele) {
               int cardValue = gridValue[ele];
               return SudokuDetailModel(
@@ -93,13 +92,16 @@ class _SudokuPlayPageState extends State<SudokuPlayPage> {
     Map result = {};
     result['puzzle'] = List.filled(9, <int>[]);
     result['solution'] = List.filled(9, <int>[]);
-    for (int x = 0; x < 9; x ++) {
+    for (int x = 0; x < 9; x++) {
       result['puzzle'][x] = List.filled(9, 0);
       result['solution'][x] = List.filled(9, 0);
-      for (int y = 0; y < 9; y ++) {
-        print('x-$x,y-$y,r-${x ~/ 3 * 3 + y ~/ 3},c-${x % 3 * 3 + y % 3},data-${dataSource['puzzle'][x ~/ 3 * 3 + y ~/ 3][x % 3 * 3 + y % 3]}');
-        result['puzzle'][x][y] = dataSource['puzzle'][x ~/ 3 * 3 + y ~/ 3][x % 3 * 3 + y % 3] as int;
-        result['solution'][x][y] = dataSource['solution'][x ~/ 3 * 3 + y ~/ 3][x % 3 * 3 + y % 3] as int;
+      for (int y = 0; y < 9; y++) {
+        print(
+            'x-$x,y-$y,r-${x ~/ 3 * 3 + y ~/ 3},c-${x % 3 * 3 + y % 3},data-${dataSource['puzzle'][x ~/ 3 * 3 + y ~/ 3][x % 3 * 3 + y % 3]}');
+        result['puzzle'][x][y] =
+            dataSource['puzzle'][x ~/ 3 * 3 + y ~/ 3][x % 3 * 3 + y % 3] as int;
+        result['solution'][x][y] = dataSource['solution'][x ~/ 3 * 3 + y ~/ 3]
+            [x % 3 * 3 + y % 3] as int;
       }
     }
     return result;
@@ -127,9 +129,9 @@ class _SudokuPlayPageState extends State<SudokuPlayPage> {
 
   /// 减少未完成格子
   _dropUndoGrid(List<int> value) {
+    if (_undoRCList.indexWhere((element) => element == value) != -1)
+      _undoRCList.remove(value);
     if (_undoRCList.length == 0) _checkGameResult();
-    if (_undoRCList.indexWhere((element) => element == value) == -1) return;
-    _undoRCList.remove(value);
     setState(() {});
   }
 
@@ -170,37 +172,37 @@ class _SudokuPlayPageState extends State<SudokuPlayPage> {
         showDefaultBack: true,
         onClickBackBtn: () {
           if (!_gameIsOver)
-          showDialog(
-              context: context,
-              builder: (_) {
-                return AlertDialog(
-                  title: Text('提示'),
-                  content: Text('确认退出吗？'),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        child: Text('取消')),
-                    TextButton(
-                        onPressed: () async {
-                          Get.back();
-                          await _saveGame();
-                          Get.back();
-                        },
-                        child: Text('确认')),
-                  ],
-                );
-              });
-          else Get.back();
+            showDialog(
+                context: context,
+                builder: (_) {
+                  return AlertDialog(
+                    title: Text('提示'),
+                    content: Text('确认退出吗？'),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: Text('取消')),
+                      TextButton(
+                          onPressed: () async {
+                            Get.back();
+                            await _saveGame();
+                            Get.back();
+                          },
+                          child: Text('确认')),
+                    ],
+                  );
+                });
+          else
+            Get.back();
         },
       ),
       body: Container(
         child: Column(
           children: [
             Dimens.hGap6,
-            if (_playData.length > 0)
-            _buildContainer(),
+            if (_playData.length > 0) _buildContainer(),
             if (_playData.length > 0 && _undoRCList.length == 0 && _gameIsOver)
               Expanded(
                 child: Container(
@@ -209,6 +211,12 @@ class _SudokuPlayPageState extends State<SudokuPlayPage> {
                   ),
                 ),
               ),
+            if (_playData.length > 0 && _undoRCList.length == 0 && _gameIsOver)
+              TextButton(
+                  onPressed: () {
+                    _getPlayData();
+                  },
+                  child: Text('开始新游戏')),
             if (_playData.length > 0 && _undoRCList.length == 0 && !_gameIsOver)
               Expanded(
                 child: Container(
@@ -335,54 +343,57 @@ class _SudokuPlayPageState extends State<SudokuPlayPage> {
   /// 渲染键盘
   Widget _buildBottomSheet() {
     List<Map<String, dynamic>> _keyboardList = SudokuConfig.keyboardList;
-    return Container(
-      color: Colors.white,
-      child: GridView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: _keyboardList.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            childAspectRatio: 2,
-          ),
-          itemBuilder: (_, index) {
-            return Container(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  TextButton(
-                    child: Text(
-                      _keyboardList[index]['value'],
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                          fontSize: Dimens.font_size_16),
-                    ),
-                    onPressed: () {
-                      onClickKeyboard(_keyboardList[index]);
-                    },
-                  ),
-                  if (_currentGrid != null &&
-                      _currentGrid!.isMarkStatus &&
-                      '123456789'.contains(_keyboardList[index]['key']))
-                    Positioned(
-                      right: 10,
-                      top: 10,
-                      child: Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                            color: _currentGrid!.markList.contains(
-                                    int.parse(_keyboardList[index]['key']))
-                                ? Colors.orange.shade600
-                                : Colors.orange.shade100,
-                            borderRadius: BorderRadius.circular(50)),
+    return SafeArea(
+      bottom: true,
+      child: Container(
+        color: Colors.white,
+        child: GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: _keyboardList.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 2,
+            ),
+            itemBuilder: (_, index) {
+              return Container(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    TextButton(
+                      child: Text(
+                        _keyboardList[index]['value'],
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontSize: Dimens.font_size_16),
                       ),
+                      onPressed: () {
+                        onClickKeyboard(_keyboardList[index]);
+                      },
                     ),
-                ],
-              ),
-            );
-          }),
+                    if (_currentGrid != null &&
+                        _currentGrid!.isMarkStatus &&
+                        '123456789'.contains(_keyboardList[index]['key']))
+                      Positioned(
+                        right: 10,
+                        top: 10,
+                        child: Container(
+                          width: 5,
+                          height: 5,
+                          decoration: BoxDecoration(
+                              color: _currentGrid!.markList.contains(
+                                      int.parse(_keyboardList[index]['key']))
+                                  ? Colors.orange.shade600
+                                  : Colors.orange.shade100,
+                              borderRadius: BorderRadius.circular(50)),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }),
+      ),
     );
   }
 

@@ -20,7 +20,7 @@ class _CacheImageWidgetState extends State<CacheImageWidget> {
       width: 60,
       fit: BoxFit.cover,
       image: CachedNetworkImageProvider(
-          'https://jacokwu.cn/images/public/ocr2.jp'),
+          'https://jacokwu.cn/images/public/ocr2.jpg'),
       imageBuilder: OctoImageTransformer.circleAvatar(),
       progressIndicatorBuilder: (context, progress) {
         double? value;

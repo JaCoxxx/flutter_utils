@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        测试网
+    </div>
+    <script>
+        let paramsUrl = '';
+        let searchMap = {};
+            // url/?url=https://jacokwu.cn/images/public/IR02114178.pdf
+            console.log(location.search == '', location.search);
+            if (location.search == '') {
+                console.log('链接为空，请联系管理员');
+            } else {
+                location.search.split('?')[1].split('&').forEach((e) => {
+                    let arr = e.split('=');
+                    searchMap[arr[0]] = arr[1];
+                });
+            }
+            paramsUrl = searchMap['url'];
+            let cusSpan = document.createElement('span');
+            cusSpan.innerText = paramsUrl ?? 'fsff';
+            document.body.appendChild(cusSpan);
+    </script>
+</body>
+</html>

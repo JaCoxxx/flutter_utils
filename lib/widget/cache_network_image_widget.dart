@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_utils/common/dimens.dart';
+import 'package:flutter_utils/widget/photo_view_widget.dart';
+import 'package:get/get.dart';
 
 /// jacokwu
 /// 8/2/21 4:08 PM
@@ -37,6 +39,7 @@ class CacheNetworkImageWidget extends StatefulWidget {
   final int? maxWidthDiskCache;
   final int? maxHeightDiskCache;
   final ImageRenderMethodForWeb imageRenderMethodForWeb;
+  final VoidCallback? onTap;
 
   const CacheNetworkImageWidget({
     Key? key,
@@ -67,7 +70,7 @@ class CacheNetworkImageWidget extends StatefulWidget {
     this.cacheKey,
     this.maxWidthDiskCache,
     this.maxHeightDiskCache,
-    this.imageRenderMethodForWeb = ImageRenderMethodForWeb.HtmlImage,
+    this.imageRenderMethodForWeb = ImageRenderMethodForWeb.HtmlImage, this.onTap,
   }) : super(key: key);
 
   @override
@@ -78,36 +81,41 @@ class CacheNetworkImageWidget extends StatefulWidget {
 class _CacheNetworkImageWidgetState extends State<CacheNetworkImageWidget> {
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: widget.imageUrl,
-      httpHeaders: widget.httpHeaders,
-      imageBuilder: widget.imageBuilder,
-      placeholder: widget.placeholder,
-      progressIndicatorBuilder:
-          widget.progressIndicatorBuilder ?? _defaultProgressIndicatorBuilder,
-      errorWidget: widget.errorWidget ?? _defaultErrorWidget,
-      fadeOutDuration: widget.fadeOutDuration,
-      fadeOutCurve: widget.fadeOutCurve,
-      fadeInDuration: widget.fadeInDuration,
-      fadeInCurve: widget.fadeInCurve,
-      width: widget.width,
-      height: widget.height,
-      fit: widget.fit,
-      alignment: widget.alignment,
-      repeat: widget.repeat,
-      matchTextDirection: widget.matchTextDirection,
-      cacheManager: widget.cacheManager,
-      useOldImageOnUrlChange: widget.useOldImageOnUrlChange,
-      color: widget.color,
-      filterQuality: widget.filterQuality,
-      colorBlendMode: widget.colorBlendMode,
-      placeholderFadeInDuration: widget.placeholderFadeInDuration,
-      memCacheWidth: widget.memCacheWidth,
-      memCacheHeight: widget.memCacheHeight,
-      cacheKey: widget.cacheKey,
-      maxWidthDiskCache: widget.maxWidthDiskCache,
-      maxHeightDiskCache: widget.maxHeightDiskCache,
-      imageRenderMethodForWeb: widget.imageRenderMethodForWeb,
+    return GestureDetector(
+      onTap: widget.onTap == null ? () {
+        Get.to(PhotoViewWidget(urlList: [widget.imageUrl]));
+      } : widget.onTap,
+      child: CachedNetworkImage(
+        imageUrl: widget.imageUrl,
+        httpHeaders: widget.httpHeaders,
+        imageBuilder: widget.imageBuilder,
+        placeholder: widget.placeholder,
+        progressIndicatorBuilder:
+            widget.progressIndicatorBuilder ?? _defaultProgressIndicatorBuilder,
+        errorWidget: widget.errorWidget ?? _defaultErrorWidget,
+        fadeOutDuration: widget.fadeOutDuration,
+        fadeOutCurve: widget.fadeOutCurve,
+        fadeInDuration: widget.fadeInDuration,
+        fadeInCurve: widget.fadeInCurve,
+        width: widget.width,
+        height: widget.height,
+        fit: widget.fit,
+        alignment: widget.alignment,
+        repeat: widget.repeat,
+        matchTextDirection: widget.matchTextDirection,
+        cacheManager: widget.cacheManager,
+        useOldImageOnUrlChange: widget.useOldImageOnUrlChange,
+        color: widget.color,
+        filterQuality: widget.filterQuality,
+        colorBlendMode: widget.colorBlendMode,
+        placeholderFadeInDuration: widget.placeholderFadeInDuration,
+        memCacheWidth: widget.memCacheWidth,
+        memCacheHeight: widget.memCacheHeight,
+        cacheKey: widget.cacheKey,
+        maxWidthDiskCache: widget.maxWidthDiskCache,
+        maxHeightDiskCache: widget.maxHeightDiskCache,
+        imageRenderMethodForWeb: widget.imageRenderMethodForWeb,
+      ),
     );
   }
 
@@ -117,6 +125,9 @@ class _CacheNetworkImageWidgetState extends State<CacheNetworkImageWidget> {
     DownloadProgress progress,
   ) {
     return Container(
+      constraints: BoxConstraints(
+        minHeight: 100,
+      ),
       child: Center(
         child: CircularProgressIndicator(
           value: progress.progress,

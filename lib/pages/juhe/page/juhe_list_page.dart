@@ -35,6 +35,10 @@ class _JuHeListPageState extends State<JuHeListPage> {
         'title': '数独',
         'path': '/sudoku-home',
       },
+      {
+        'title': '一些功能',
+        'path': '/some-utils',
+      },
     ];
   }
 

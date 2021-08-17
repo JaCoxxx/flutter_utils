@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_utils/common/main_theme_data.dart';
 import 'package:flutter_utils/pages/main/my_app.dart';
 import 'package:flutter_utils/utils/request.dart';
@@ -21,6 +22,9 @@ void main() {
   AudioPlayer.logEnabled = true;
 
   Request().setEnableDebugPrint(true);
+
+  EasyRefresh.defaultHeader = BezierCircleHeader();
+  EasyRefresh.defaultFooter = BezierBounceFooter();
 
   runApp(MyApp());
 }

@@ -34,6 +34,7 @@ class _AudioPlayPageState extends State<AudioPlayPage> {
     return Scaffold(
       appBar: WAppBar(
         titleConfig: WAppBarTitleConfig(title: '音乐播放列表'),
+        showDefaultBack: true,
       ),
       body: Container(
         child: Center(

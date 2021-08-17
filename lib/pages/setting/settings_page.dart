@@ -1,9 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
-import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
+import 'dart:io';
 
-GlobalKey<SliderMenuContainerState> _key =
-new GlobalKey<SliderMenuContainerState>();
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_utils/common/dimens.dart';
+import 'package:flutter_utils/utils/clear_cache_utils.dart';
+import 'package:flutter_utils/utils/toast_utils.dart';
+import 'package:flutter_utils/utils/utils.dart';
+import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
+import 'package:flutter_utils/widget/list_item_widget.dart';
+import 'package:flutter_utils/widget/widgets.dart';
+import 'package:open_app_settings/open_app_settings.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -13,190 +19,206 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  bool _isAndroid = false;
 
-  // late SimpleHiddenDrawerController controller;
+  int? _cacheBytes;
 
-  bool value = false;
+  String? _cacheValue;
+
+  List _menuList = [];
 
   @override
-  void didChangeDependencies() {
-    // controller = SimpleHiddenDrawerController.of(context);
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  _initData() async {
+    _getPlatformInfo();
+    await _getCacheValue();
+    _getMenuList();
+  }
+
+  _getPlatformInfo() {
+    _isAndroid = Platform.isAndroid;
+    setState(() {});
+  }
+
+  _getCacheValue() async {
+    _cacheBytes = await ClearCacheUtil.total();
+    print(_cacheBytes);
+    _cacheValue = bytesToSize(_cacheBytes);
+    setState(() {});
+  }
+
+  _getMenuList() {
+    _menuList
+      ..clear()
+      ..addAll([
+        {
+          'title': '清理缓存',
+          'expandWidget': () => Text(_cacheValue ?? ''),
+          'onTap': () async {
+            try {
+              if (_cacheBytes! <= 0) throw '没有缓存可清理';
+
+              /// 执行清除缓存
+              await ClearCacheUtil.clear();
+
+              /// 更新缓存
+              await _getCacheValue();
+
+              showToast('缓存清除成功');
+            } catch (e) {
+              showToast(e.toString());
+            }
+          },
+        },
+        {
+          'title': '应用信息',
+          'onTap': () {
+            OpenAppSettings.openAppSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '电池优化',
+          'onTap': () {
+            OpenAppSettings.openBatteryOptimizationSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '蓝牙',
+          'onTap': () {
+            OpenAppSettings.openBluetoothSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '移动数据',
+          'onTap': () {
+            OpenAppSettings.openDataRoamingSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '日期和时间',
+          'onTap': () {
+            OpenAppSettings.openDateSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '显示和亮度',
+          'onTap': () {
+            OpenAppSettings.openDisplaySettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '储存',
+          'onTap': () {
+            OpenAppSettings.openInternalStorageSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '定位服务',
+          'onTap': () {
+            OpenAppSettings.openLocationSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': 'NFC',
+          'onTap': () {
+            OpenAppSettings.openNFCSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '应用通知',
+          'onTap': () {
+            OpenAppSettings.openNotificationSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '安全设置',
+          'onTap': () {
+            OpenAppSettings.openSecuritySettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': '声音和震动',
+          'onTap': () {
+            OpenAppSettings.openSoundSettings();
+          },
+          'onlyAndroid': true,
+        },
+        {
+          'title': 'WIFI设置',
+          'onTap': () {
+            OpenAppSettings.openWIFISettings();
+          },
+          'onlyAndroid': true,
+        },
+      ]);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SliderMenuContainer(
-          appBarColor: Colors.white,
-          key: _key,
-          sliderMenuOpenSize: 200,
-          title: Text(
-            '设置',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+      appBar: WAppBar(
+        titleConfig: WAppBarTitleConfig(title: '设置'),
+        showDefaultBack: true,
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: Dimens.pd8),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (_, index) {
+                  return !_isAndroid && _menuList[index]['onlyAndroid'] == true
+                      ? emptyWidget
+                      : _buildSettingItem(
+                          _menuList[index]['title'],
+                          _menuList[index]['iconData'] ?? null,
+                          _menuList[index]['onTap'],
+                          expandWidget: _menuList[index]['expandWidget'],
+                        );
+                },
+                shrinkWrap: true,
+                itemCount: _menuList.length,
+              ),
+            ],
           ),
-          sliderMenu: MenuWidget(
-            onItemClick: (title) {
-              _key.currentState!.closeDrawer();
-              setState(() {
-                print(title);
-              });
-            },
-          ),
-          sliderMain: MainWidget()),
+        ),
+      ),
     );
   }
-}
 
-class MenuWidget extends StatelessWidget {
-  final Function(String)? onItemClick;
-
-  const MenuWidget({Key? key, this.onItemClick}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.only(top: 30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: 30,
-          ),
-          CircleAvatar(
-            radius: 65,
-            backgroundColor: Colors.grey,
-            child: CircleAvatar(
-              radius: 60,
-              child: Text('吴'),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            'Nick',
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-                fontFamily: 'BalsamiqSans'),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          sliderItem('Home', Icons.home),
-          sliderItem('Add Post', Icons.add_circle),
-          sliderItem('Notification', Icons.notifications_active),
-          sliderItem('Likes', Icons.favorite),
-          sliderItem('Setting', Icons.settings),
-          sliderItem('LogOut', Icons.arrow_back_ios)
+  Widget _buildSettingItem(String title, IconData? iconData, VoidCallback onTap, {Widget Function()? expandWidget}) {
+    return CustomListItem(
+      title: Padding(
+        padding: EdgeInsets.symmetric(vertical: Dimens.pd4),
+        child: Text(title),
+      ),
+      leading: iconData == null ? null : Icon(iconData),
+      trailing: Row(
+        children: [
+          if (expandWidget != null) expandWidget(),
+          rightArrowIcon,
         ],
       ),
+      needDefaultDivider: true,
+      backgroundColor: Colors.white,
+      onTap: onTap,
     );
   }
-
-  Widget sliderItem(String title, IconData icons) => ListTile(
-      title: Text(
-        title,
-        style:
-        TextStyle(color: Colors.black, fontFamily: 'BalsamiqSans_Regular'),
-      ),
-      leading: Icon(
-        icons,
-        color: Colors.black,
-      ),
-      onTap: () {
-        onItemClick!(title);
-      });
-}
-
-class MainWidget extends StatefulWidget {
-  @override
-  _MainWidgetState createState() => _MainWidgetState();
-}
-
-class _MainWidgetState extends State<MainWidget> {
-  List<Data> dataList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    dataList.add(Data(Colors.amber, 'Amelia Brown',
-        'Life would be a great deal easier if dead things had the decency to remain dead.'));
-    dataList.add(Data(Colors.orange, 'Olivia Smith',
-        'That proves you are unusual," returned the Scarecrow'));
-    dataList.add(Data(Colors.deepOrange, 'Sophia Jones',
-        'Her name badge read: Hello! My name is DIE, DEMIGOD SCUM!'));
-    dataList.add(Data(Colors.red, 'Isabella Johnson',
-        'I am about as intimidating as a butterfly.'));
-    dataList.add(Data(Colors.purple, 'Emily Taylor',
-        'Never ask an elf for help; they might decide your better off dead, eh?'));
-    dataList.add(Data(Colors.green, 'Maya Thomas', 'Act first, explain later'));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      child: ListView.separated(
-          scrollDirection: Axis.vertical,
-          //   physics: BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          itemBuilder: (builder, index) {
-            return LimitedBox(
-              maxHeight: 150,
-              child: Container(
-                decoration: new BoxDecoration(
-                    color: dataList[index].color,
-                    borderRadius: new BorderRadius.all(
-                      const Radius.circular(10.0),
-                    )),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Text(
-                        dataList[index].name,
-                        style: TextStyle(
-                            fontFamily: 'BalsamiqSans_Blod',
-                            fontSize: 30,
-                            color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        dataList[index].detail,
-                        style: TextStyle(
-                            fontFamily: 'BalsamiqSans_Regular',
-                            fontSize: 15,
-                            color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
-          separatorBuilder: (builder, index) {
-            return Divider(
-              height: 10,
-              thickness: 0,
-            );
-          },
-          itemCount: dataList.length),
-    );
-  }
-}
-
-class Data {
-  MaterialColor color;
-  String name;
-  String detail;
-
-  Data(this.color, this.name, this.detail);
 }

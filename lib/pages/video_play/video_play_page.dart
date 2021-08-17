@@ -27,7 +27,6 @@ class _VideoPlayPageState extends State<VideoPlayPage> {
 
   _loadVideo() async {
     BotToast.showLoading();
-    print('http://vd3.bdstatic.com/mda-ifvqu9yp3eaqueep/mda-ifvqu9yp3eaqueep.mp4');
     _controller = VideoPlayerController.network('https://jacokwu.cn/images/public/movie.mp4')
       ..initialize().then((_) {
         print('success');

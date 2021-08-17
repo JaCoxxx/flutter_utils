@@ -27,9 +27,8 @@ class CustomListItem extends StatelessWidget {
     this.autofocus = false,
     this.tileColor,
     this.selectedTileColor,
+    this.backgroundColor,
     this.enableFeedback,
-    this.horizontalTitleGap = 0,
-    this.minVerticalPadding,
     // 24为icon默认大小
     this.minLeadingWidth = 24 + 10,
     this.needDefaultTrailing = false,
@@ -57,9 +56,8 @@ class CustomListItem extends StatelessWidget {
   final bool autofocus;
   final Color? tileColor;
   final Color? selectedTileColor;
+  final Color? backgroundColor;
   final bool? enableFeedback;
-  final double? horizontalTitleGap;
-  final double? minVerticalPadding;
   final double? minLeadingWidth;
 
   /// 自定义参数
@@ -144,63 +142,66 @@ class CustomListItem extends StatelessWidget {
       );
     }
 
-    return Column(
-      children: [
-        InkWell(
-          customBorder: shape ?? ListTileTheme.of(context).shape,
-          onTap: enabled ? onTap : null,
-          onLongPress: enabled ? onLongPress : null,
-          mouseCursor: resolvedMouseCursor,
-          canRequestFocus: enabled,
-          focusNode: focusNode,
-          focusColor: focusColor,
-          hoverColor: hoverColor,
-          autofocus: autofocus,
-          enableFeedback: enableFeedback ??
-              ListTileTheme.of(context).enableFeedback ??
-              true,
-          child: Semantics(
-            selected: selected,
-            enabled: enabled,
-            child: Ink(
-              decoration: ShapeDecoration(
-                shape: shape ?? ListTileTheme.of(context).shape ?? const Border(),
-                color: _tileBackgroundColor(ListTileTheme.of(context)),
-              ),
-              child: SafeArea(
-                top: false,
-                bottom: false,
-                minimum: resolvedContentPadding,
-                child: Row(
-                  children: [
-                    if (leadingIcon != null)
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        width: minLeadingWidth,
-                        child: leadingIcon,
+    return Container(
+      color: backgroundColor,
+      child: Column(
+        children: [
+          InkWell(
+            customBorder: shape ?? ListTileTheme.of(context).shape,
+            onTap: enabled ? onTap : null,
+            onLongPress: enabled ? onLongPress : null,
+            mouseCursor: resolvedMouseCursor,
+            canRequestFocus: enabled,
+            focusNode: focusNode,
+            focusColor: focusColor,
+            hoverColor: hoverColor,
+            autofocus: autofocus,
+            enableFeedback: enableFeedback ??
+                ListTileTheme.of(context).enableFeedback ??
+                true,
+            child: Semantics(
+              selected: selected,
+              enabled: enabled,
+              child: Ink(
+                decoration: ShapeDecoration(
+                  shape: shape ?? ListTileTheme.of(context).shape ?? const Border(),
+                  color: _tileBackgroundColor(ListTileTheme.of(context)),
+                ),
+                child: SafeArea(
+                  top: false,
+                  bottom: false,
+                  minimum: resolvedContentPadding,
+                  child: Row(
+                    children: [
+                      if (leadingIcon != null)
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          width: minLeadingWidth,
+                          child: leadingIcon,
+                        ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                              titleText,
+                            if (subtitleText != null)
+                              subtitleText,
+                          ],
+                        ),
                       ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                            titleText,
-                          if (subtitleText != null)
-                            subtitleText,
-                        ],
-                      ),
-                    ),
-                    if (trailingIcon != null)
-                      trailingIcon
-                  ],
+                      if (trailingIcon != null)
+                        trailingIcon
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        needDefaultDivider == true
-            ? _buildDefaultDivider()
-            : divider ?? emptyWidget,
-      ],
+          needDefaultDivider == true
+              ? _buildDefaultDivider()
+              : divider ?? emptyWidget,
+        ],
+      ),
     );
   }
 

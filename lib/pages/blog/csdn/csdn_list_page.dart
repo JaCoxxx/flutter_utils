@@ -99,6 +99,7 @@ class _CSDNListPageState extends State<CSDNListPage> {
             ],
           ),
           onTap: () {
+            print(item);
             Get.toNamed('/csdn-detail', arguments: {
               'url': item['url'],
               'title': item['title'],

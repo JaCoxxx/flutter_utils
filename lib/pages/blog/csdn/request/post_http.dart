@@ -1,3 +1,4 @@
+import 'package:flutter_utils/pages/blog/csdn/request/request_url.dart';
 import 'package:flutter_utils/utils/request.dart';
 
 /// jacokwu
@@ -11,10 +12,14 @@ class CSDNPostHttp {
   static init(String name) {
     _request = Request();
     _name = name;
-    _request.init('https://blog.csdn.net/', null);
+    _request.init(null, null);
   }
 
   static Future getListPage(String? name) async {
-    return _request.get(name ?? _name);
+    return _request.get('${CSDNRequestUrl.getListPage}${name ?? _name}');
+  }
+
+  static Future getDetailPage(String? path) async {
+    return _request.get(path!);
   }
 }

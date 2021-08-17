@@ -212,7 +212,7 @@ class Request {
 // post请求
 
   Future post(String path, dynamic data,
-      {Options? options,
+      {
       token = true,
       ResponseType? responseType,
       String? contentType,
@@ -224,31 +224,29 @@ class Request {
     return _post(
         path,
         data,
-        options!,
         token,
-        responseType!,
-        contentType!,
+        responseType,
+        contentType,
         sendTimeout != null ? sendTimeout : requestConfig['sendTimeout'],
         receiveTimeout != null
             ? receiveTimeout
             : requestConfig['receiveTimeout'],
         headers!,
         cancelToken ?? _cancelToken,
-        onReceiveProgress!);
+        onReceiveProgress);
   }
 
   Future _post(
       String path,
       dynamic data,
-      Options options,
       token,
-      ResponseType responseType,
-      String contentType,
+      ResponseType? responseType,
+      String? contentType,
       int? sendTimeout,
       int? receiveTimeout,
       Map<String, dynamic> headers,
       cancelToken,
-      ProgressCallback onReceiveProgress) async {
+      ProgressCallback? onReceiveProgress) async {
     var response;
     try {
       response = await _dio.post(

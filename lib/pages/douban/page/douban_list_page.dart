@@ -3,6 +3,7 @@ import 'package:flutter_utils/common/dimens.dart';
 import 'package:flutter_utils/pages/douban/request/post_http.dart';
 import 'package:flutter_utils/utils/toast_utils.dart';
 import 'package:flutter_utils/widget/cache_iamge_widget.dart';
+import 'package:flutter_utils/widget/cache_network_image_widget.dart';
 import 'package:flutter_utils/widget/custom_divider.dart';
 import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
 import 'package:flutter_utils/widget/custom_tab_bar.dart';
@@ -91,7 +92,7 @@ class _DoubanListPageState extends State<DoubanListPage>
         padding: EdgeInsets.symmetric(horizontal: Dimens.pd8),
         child: Column(
           children: [
-            CacheImageWidget(),
+            CacheNetworkImageWidget(imageUrl: 'https://jacokwu.cn/images/public/ocr3.jpg'),
           ],
         ),
       ),
