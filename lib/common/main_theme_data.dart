@@ -7,9 +7,10 @@ class MainThemeData {
     primaryColorBrightness: Brightness.light,
     primaryColorLight: Colors.blueAccent.shade100,
     primaryColorDark: Colors.blueAccent.shade700,
-    accentColor: Colors.grey.shade100,
+    accentColor: Colors.black54,
     scaffoldBackgroundColor: Color(0xfff0f0f0),
     backgroundColor: Color(0xfff0f0f0),
+    toggleableActiveColor: Colors.blueAccent,
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
     ),

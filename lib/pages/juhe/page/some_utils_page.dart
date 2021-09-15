@@ -27,7 +27,7 @@ class _SomeUtilsPageState extends State<SomeUtilsPage> {
             children: [
               TextButton(onPressed: () async {
                 String url = '';
-                String qq = '2510333047';
+                String qq = '10001';
                 if(Platform.isAndroid){
                   url = 'mqqwpa://im/chat?chat_type=wpa&uin=$qq';
                 }else{

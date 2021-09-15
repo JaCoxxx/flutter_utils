@@ -22,6 +22,7 @@ class _VideoPlayPageState extends State<VideoPlayPage> {
   void initState() {
     super.initState();
     data = Get.arguments;
+    _chewieController = ChewieController(videoPlayerController: _controller);
     _loadVideo();
   }
 

@@ -1,12 +1,14 @@
+import 'dart:io';
+
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_utils/common/dimens.dart';
+import 'package:flutter_utils/pages/douban/page/ex_page_one.dart';
 import 'package:flutter_utils/pages/douban/request/post_http.dart';
 import 'package:flutter_utils/utils/toast_utils.dart';
-import 'package:flutter_utils/widget/cache_iamge_widget.dart';
 import 'package:flutter_utils/widget/cache_network_image_widget.dart';
-import 'package:flutter_utils/widget/custom_divider.dart';
 import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
-import 'package:flutter_utils/widget/custom_tab_bar.dart';
+import 'package:get/get.dart';
 
 /// jacokwu
 /// 7/29/21 3:05 PM
@@ -92,14 +94,34 @@ class _DoubanListPageState extends State<DoubanListPage>
         padding: EdgeInsets.symmetric(horizontal: Dimens.pd8),
         child: Column(
           children: [
-            CacheNetworkImageWidget(imageUrl: 'https://jacokwu.cn/images/public/ocr3.jpg'),
+            TextButton(
+              child: Text('点击'),
+              onPressed: () {
+                if (Platform.isAndroid) {
+                  DeviceInfoPlugin().androidInfo.then((value) {
+                    print(value.id);
+                    print(value.version.codename);
+                    print(value.androidId);
+                  });
+                } else {
+                  DeviceInfoPlugin().iosInfo.then((value) {
+                    print(value.identifierForVendor);
+                    print(value.name);
+                    print(value.systemName);
+                  });
+                }
+              },
+            ),
+            TextButton(onPressed: () {
+              // Get.toNamed('/douban-list/ex1');
+              Get.to(ExPageOne());
+            }, child: Text('ex1'),),
+            TextButton(onPressed: () {
+              Get.toNamed('/douban-list/ex2');
+            }, child: Text('ex2'),),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildContainer() {
-    return Container();
   }
 }

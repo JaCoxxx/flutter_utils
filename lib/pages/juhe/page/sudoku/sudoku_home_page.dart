@@ -4,8 +4,6 @@ import 'package:flutter_utils/common/model/sudoku_detail_model.dart';
 import 'package:flutter_utils/pages/juhe/page/sudoku/sudoku_config.dart';
 import 'package:flutter_utils/utils/toast_utils.dart';
 import 'package:get/get.dart';
-import 'package:multi_select_flutter/dialog/mult_select_dialog.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 /// jacokwu
 /// 8/4/21 7:15 PM
@@ -119,31 +117,6 @@ class _SudokuHomePageState extends State<SudokuHomePage> {
           ),
         ),
       ),
-    );
-  }
-
-  void _showMultiSelect(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (ctx) {
-        return MultiSelectDialog(
-          title: Text('选择难度'),
-          items: SudokuConfig.difficultyList
-              .map<MultiSelectItem>(
-                  (e) => MultiSelectItem(e['key'], e['value']))
-              .toList(),
-          initialValue: [],
-          onSelectionChanged: (values) {
-            print(values);
-          },
-          searchHint: '搜索',
-          confirmText: Text('确定'),
-          cancelText: Text('取消'),
-          onConfirm: (values) {
-            print(values);
-          },
-        );
-      },
     );
   }
 

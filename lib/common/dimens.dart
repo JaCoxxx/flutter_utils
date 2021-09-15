@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Dimens {
   static const double pd1 = 1;
@@ -9,19 +10,29 @@ class Dimens {
   static const double pd10 = 10;
   static const double pd12 = 12;
   static const double pd14 = 14;
+  static const double pd15 = 15;
   static const double pd16 = 16;
   static const double pd20 = 20;
   static const double pd25 = 25;
   static const double pd30 = 30;
+  static const double pd40 = 40;
 
   static const double font_size_12 = 12;
   static const double font_size_14 = 14;
   static const double font_size_16 = 16;
   static const double font_size_18 = 18;
+  static const double font_size_20 = 20;
   static const double font_size_22 = 22;
   static const double font_size_24 = 24;
   static const double font_size_32 = 32;
+  static const double font_size_48 = 48;
 
+  static const Widget hGap40 = SizedBox(height: 40);
+  static const Widget wGap40 = SizedBox(width: 40);
+  static const Widget hGap30 = SizedBox(height: 30);
+  static const Widget wGap30 = SizedBox(width: 30);
+  static const Widget hGap22 = SizedBox(height: 22);
+  static const Widget wGap22 = SizedBox(width: 22);
   static const Widget hGap20 = SizedBox(height: 20);
   static const Widget wGap20 = SizedBox(width: 20);
   static const Widget hGap16 = SizedBox(height: 16);
@@ -36,4 +47,6 @@ class Dimens {
   static const Widget wGap6 = SizedBox(width: 6);
   static const Widget hGap4 = SizedBox(height: 4);
   static const Widget wGap4 = SizedBox(width: 4);
+
+  static const double itemHeight = 50;
 }

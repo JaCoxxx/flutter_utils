@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_utils/common/dimens.dart';
+import 'package:flutter_utils/utils/cache_utils.dart';
 import 'package:flutter_utils/utils/clear_cache_utils.dart';
 import 'package:flutter_utils/utils/toast_utils.dart';
 import 'package:flutter_utils/utils/utils.dart';
@@ -69,6 +70,17 @@ class _SettingsPageState extends State<SettingsPage> {
               await _getCacheValue();
 
               showToast('缓存清除成功');
+            } catch (e) {
+              showToast(e.toString());
+            }
+          },
+        },
+        {
+          'title': '清理数据',
+          'onTap': () async {
+            try {
+              await CacheUtils.clear();
+              showToast('数据清除成功');
             } catch (e) {
               showToast(e.toString());
             }

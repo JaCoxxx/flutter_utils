@@ -58,6 +58,12 @@ bool checkFileExist(String path) {
   return File(path).existsSync();
 }
 
+/// 获取文件后缀
+String? getFileSuffix(String fileName) {
+  RegExp reg = RegExp(r'[^\.]\w*$');
+  return reg.allMatches(fileName).last.group(0);
+}
+
 /// 字节转换
 String bytesToSize(bytes) {
   if (bytes == 0) return '0 B';
@@ -118,4 +124,52 @@ VoidCallback throttleFunc(Future Function() func) {
     }
   };
   return target;
+}
+
+/// 判断字符串是否为空
+bool isStringEmpty(String? str) {
+  return str == null || str.length == 0 || str.isEmpty;
+}
+
+/// 判断字符串是否不为空
+bool isStringNotEmpty(String? str) {
+  return str != null && str.length != 0 && str.isNotEmpty;
+}
+
+/// 组装get请求链接
+String assemblyLink(String path, Map<String, dynamic> params) {
+  params.keys.forEach((element) {
+    if (isStringNotEmpty(params[element].toString())) {
+      path += '${path.contains('?') ? '&' : '?'}$element=${params[element] ?? ''}';
+    }
+  });
+ return Uri.encodeFull(path);
+}
+
+/// 秒数转时间
+String getTimeBySeconds(int seconds) {
+  String time = '';
+  int remainSeconds = seconds % 60;
+  int minute = seconds ~/ 60;
+  int remainMinute = minute % 60;
+  int hour = minute ~/ 60;
+  if (hour != 0) time += '${fillInNum(hour)}:';
+  time += '${fillInNum(remainMinute)}:${fillInNum(remainSeconds)}';
+  return time;
+}
+
+/// 数字补0
+String fillInNum(int num, [int digit = 2]) {
+  String str = num.toString();
+  int absenceDigit = digit - str.length;
+  if (absenceDigit > 0) str = List.filled(absenceDigit, '0').join('') + str;
+  return str;
+}
+
+/// 通过url得到文件名
+String getNameByUrl(String url) {
+  RegExp reg = url.contains('?') ? RegExp(r'/([^/\?]*)\?') : RegExp(r'/([^/\?]*)');
+  String name = reg.allMatches(url).last.group(0)!.substring(1);
+  name = url.contains('?') ? name.substring(0, name.length - 1) : name;
+  return name;
 }

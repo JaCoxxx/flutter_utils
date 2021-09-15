@@ -14,8 +14,7 @@ class CacheNetworkImageWidget extends StatefulWidget {
   final Map<String, String>? httpHeaders;
   final Widget Function(BuildContext, ImageProvider<Object>)? imageBuilder;
   final Widget Function(BuildContext, String)? placeholder;
-  final Widget Function(BuildContext, String, DownloadProgress)?
-      progressIndicatorBuilder;
+  final Widget Function(BuildContext, String, DownloadProgress)? progressIndicatorBuilder;
   final Widget Function(BuildContext, String, dynamic)? errorWidget;
   final Duration? fadeOutDuration;
   final Curve fadeOutCurve;
@@ -40,6 +39,8 @@ class CacheNetworkImageWidget extends StatefulWidget {
   final int? maxHeightDiskCache;
   final ImageRenderMethodForWeb imageRenderMethodForWeb;
   final VoidCallback? onTap;
+  /// 是否需要默认的图片点击事件 - 点击预览
+  final bool needDefaultOnTap;
 
   const CacheNetworkImageWidget({
     Key? key,
@@ -70,28 +71,28 @@ class CacheNetworkImageWidget extends StatefulWidget {
     this.cacheKey,
     this.maxWidthDiskCache,
     this.maxHeightDiskCache,
-    this.imageRenderMethodForWeb = ImageRenderMethodForWeb.HtmlImage, this.onTap,
+    this.imageRenderMethodForWeb = ImageRenderMethodForWeb.HtmlImage,
+    this.onTap,
+    this.needDefaultOnTap = false,
   }) : super(key: key);
 
   @override
-  _CacheNetworkImageWidgetState createState() =>
-      _CacheNetworkImageWidgetState();
+  _CacheNetworkImageWidgetState createState() => _CacheNetworkImageWidgetState();
 }
 
 class _CacheNetworkImageWidgetState extends State<CacheNetworkImageWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap == null ? () {
+      onTap: widget.needDefaultOnTap ? () {
         Get.to(PhotoViewWidget(urlList: [widget.imageUrl]));
-      } : widget.onTap,
+      } : widget.onTap == null ? null : widget.onTap,
       child: CachedNetworkImage(
         imageUrl: widget.imageUrl,
         httpHeaders: widget.httpHeaders,
         imageBuilder: widget.imageBuilder,
         placeholder: widget.placeholder,
-        progressIndicatorBuilder:
-            widget.progressIndicatorBuilder ?? _defaultProgressIndicatorBuilder,
+        progressIndicatorBuilder: widget.progressIndicatorBuilder ?? _defaultProgressIndicatorBuilder,
         errorWidget: widget.errorWidget ?? _defaultErrorWidget,
         fadeOutDuration: widget.fadeOutDuration,
         fadeOutCurve: widget.fadeOutCurve,
@@ -152,6 +153,8 @@ class _CacheNetworkImageWidgetState extends State<CacheNetworkImageWidget> {
             ),
             Text(
               error.toString(),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.red,
                 fontSize: Dimens.font_size_14,

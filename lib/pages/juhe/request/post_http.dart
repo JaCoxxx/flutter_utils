@@ -10,6 +10,8 @@ class JuHePostHttp {
   static String _todayHistoryKey = '88d51d7fd6a7a4081f927f98a2471067';
   static String _todayOilPriceKey = '0466362d8d89b93b7abc936f0ceab541';
   static String _sudokuKey = 'bfa3ce9b7d5eadba4fbc341faf7c7ea3';
+  static String _rollAppKey = 'xkojmlpcmgvolgzo';
+  static String _rollAppSecret = 'TWV1YnpxRmRxZUtWK2RXb09jbHBHUT09';
 
   static init() {
     _request = Request();
@@ -39,17 +41,6 @@ class JuHePostHttp {
 
   /// 获取数独游戏数据
   static Future getSudokuPlayData(String difficulty) async {
-    List data = [
-      [1, 0, 0, 5, 0, 0, 3, 0, 4],
-      [6, 3, 4, 7, 2, 8, 9, 5, 1],
-      [2, 5, 9, 1, 4, 3, 0, 8, 6],
-      [9, 4, 7, 6, 3, 2, 0, 1, 8],
-      [8, 0, 3, 0, 0, 1, 4, 7, 2],
-      [5, 1, 2, 4, 8, 7, 6, 3, 0],
-      [0, 9, 0, 2, 0, 6, 8, 4, 3],
-      [3, 2, 6, 8, 7, 4, 1, 0, 5],
-      [0, 8, 0, 3, 0, 5, 0, 6, 7]
-    ];
     return _request.get(Uri.encodeFull(
         '${JuHeRequestUrl.getSudokuData}?key=$_sudokuKey&difficulty=$difficulty'));
   }

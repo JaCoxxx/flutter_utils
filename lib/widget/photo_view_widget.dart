@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_utils/common/dimens.dart';
 import 'package:flutter_utils/utils/toast_utils.dart';
 import 'package:flutter_utils/utils/utils.dart';
-import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:wallpaper_manager_flutter/wallpaper_manager_flutter.dart';
 
 /// jacokwu
 /// 8/10/21 4:04 PM
@@ -24,16 +26,20 @@ class PhotoViewWidget extends StatefulWidget {
   final dynamic maxScale;
   final Axis scrollDirection;
 
-  const PhotoViewWidget(
-      {Key? key,
-      required this.urlList,
-      this.initialIndex = 0,
-      this.backgroundDecoration,
-      this.loadingBuilder,
-      this.minScale,
-      this.maxScale,
-      this.scrollDirection = Axis.horizontal})
-      : super(key: key);
+  /// 设置壁纸用，需要设置壁纸必传
+  final BaseCacheManager? cacheManager;
+
+  const PhotoViewWidget({
+    Key? key,
+    required this.urlList,
+    this.initialIndex = 0,
+    this.backgroundDecoration,
+    this.loadingBuilder,
+    this.minScale,
+    this.maxScale,
+    this.scrollDirection = Axis.horizontal,
+    this.cacheManager,
+  }) : super(key: key);
 
   @override
   _PhotoViewWidgetState createState() => _PhotoViewWidgetState();
@@ -42,6 +48,7 @@ class PhotoViewWidget extends StatefulWidget {
 class _PhotoViewWidgetState extends State<PhotoViewWidget> {
   late int currentIndex = widget.initialIndex;
   late PageController _pageController;
+  late List<Map<String, dynamic>> _menuList;
 
   static const SystemUiOverlayStyle light = SystemUiOverlayStyle(
     systemNavigationBarColor: Color(0xFF000000),
@@ -56,6 +63,37 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: widget.initialIndex);
+    _menuList = [
+      {
+        'title': '下载',
+        'key': 'download',
+      },
+      {
+        'title': '分享',
+        'key': 'shared',
+      },
+    ];
+    _getExpandMenuList();
+  }
+
+  _getExpandMenuList() {
+    print(widget.cacheManager != null && Platform.isAndroid);
+    if (widget.cacheManager != null && Platform.isAndroid)
+      _menuList.addAll([
+        {
+          'title': '设为桌面壁纸',
+          'key': 'home',
+        },
+        {
+          'title': '设为锁屏壁纸',
+          'key': 'lock',
+        },
+        {
+          'title': '设为桌面/锁屏壁纸',
+          'key': 'both',
+        },
+      ]);
+    setState(() {});
   }
 
   void onPageChanged(int index) {
@@ -71,37 +109,69 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
       child: Scaffold(
         body: GestureDetector(
           onLongPress: () {
-            showBottomMenuDialog(context, [
-              {
-                'title': '下载',
-                'key': 'download',
-              },
-              {
-                'title': '分享',
-                'key': 'shared',
-              }
-            ], (int index, String key) async {
+            showBottomMenuDialog(context, _menuList, (int index, String key) async {
+              String fileName = getNameByUrl(widget.urlList[currentIndex]);
+              String path = await getDownloadPath();
               switch (key) {
                 case 'download':
                   if (await getStoragePower()) {
-                    String path = await getDownloadPath();
-                    Dio().download(widget.urlList[currentIndex], '$path/ocr2.jpg').then((value) {
-                      showToast('文件已保存至：$path/ocr2.jpg');
+                    Dio().download(widget.urlList[currentIndex], '$path/$fileName').then((value) {
+                      showToast('文件已保存至：$path/$fileName');
                     });
                   }
                   break;
                 case 'shared':
-                  String path = await getDownloadPath();
-                  if (checkFileExist('$path/ocr2.jpg')) {
-                    Share.shareFiles(['$path/ocr2.jpg']);
+                  if (checkFileExist('$path/$fileName')) {
+                    Share.shareFiles(['$path/$fileName']);
                   } else {
                     if (await getStoragePower()) {
                       Dio().download(widget.urlList[currentIndex], path).then((value) {
-                        Share.shareFiles(['$path/ocr2.jpg']);
+                        Share.shareFiles(['$path/$fileName']);
                       });
                     }
                   }
+                  break;
+                case 'home':
+                  if (widget.cacheManager == null) break;
 
+                  File cachedImage = await widget.cacheManager!.getSingleFile(widget.urlList[currentIndex]);
+
+                  int location = WallpaperManagerFlutter.HOME_SCREEN;
+
+                  WallpaperManagerFlutter().setwallpaperfromFile(cachedImage, location).then((value) {
+                    showToast('设置成功');
+                  }).catchError((err) {
+                    print(err);
+                    showToast('设置失败');
+                  });
+                  break;
+                case 'lock':
+                  if (widget.cacheManager == null) break;
+
+                  File cachedImage = await widget.cacheManager!.getSingleFile(widget.urlList[currentIndex]);
+
+                  int location = WallpaperManagerFlutter.LOCK_SCREEN;
+
+                  WallpaperManagerFlutter().setwallpaperfromFile(cachedImage, location).then((value) {
+                    showToast('设置成功');
+                  }).catchError((err) {
+                    print(err);
+                    showToast('设置失败');
+                  });
+                  break;
+                case 'both':
+                  if (widget.cacheManager == null) break;
+
+                  File cachedImage = await widget.cacheManager!.getSingleFile(widget.urlList[currentIndex]);
+
+                  int location = WallpaperManagerFlutter.BOTH_SCREENS;
+
+                  WallpaperManagerFlutter().setwallpaperfromFile(cachedImage, location).then((value) {
+                    showToast('设置成功');
+                  }).catchError((err) {
+                    print(err);
+                    showToast('设置失败');
+                  });
                   break;
                 default:
                   break;
@@ -165,7 +235,7 @@ class _PhotoViewWidgetState extends State<PhotoViewWidget> {
     return PhotoViewGalleryPageOptions(
       imageProvider: CachedNetworkImageProvider(item),
       initialScale: PhotoViewComputedScale.contained,
-      minScale: PhotoViewComputedScale.contained * (0.5 + index / 10),
+      minScale: PhotoViewComputedScale.contained * 0.5,
       maxScale: PhotoViewComputedScale.covered * 4.1,
       heroAttributes: PhotoViewHeroAttributes(tag: item),
     );

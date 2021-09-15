@@ -51,7 +51,7 @@ class _CustomTabBarState extends State<CustomTabBar>
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: widget.initialIndex);
+    _pageController = PageController(initialPage: widget.initialIndex, keepPage: true);
     _menuList = widget.menuList.toList();
     _currentIndex = widget.initialIndex;
     _initialShowNum = widget.initialShowNum;

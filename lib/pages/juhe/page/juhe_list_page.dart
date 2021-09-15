@@ -36,6 +36,10 @@ class _JuHeListPageState extends State<JuHeListPage> {
         'path': '/sudoku-home',
       },
       {
+        'title': '物流查询',
+        'path': '/logistics-query',
+      },
+      {
         'title': '一些功能',
         'path': '/some-utils',
       },

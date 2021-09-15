@@ -21,4 +21,11 @@ class Constants {
   static const Color gray_9 = Color(0xff999999);
   static const Color gray_c = Color(0xffCCCCCC);
   static const Color dividerColor = Color(0xffeeeeee);
+
+  static const Color brownColor = Color(0xFFB8741A);
+
+  static const Color titleColor = Colors.black;
+  static const Color titleColor2 = Color(0xff6c6d71);
+  static const Color contentColor = black_6;
+  static const Color lightLineColor = Color(0xffe6e6e6);
 }

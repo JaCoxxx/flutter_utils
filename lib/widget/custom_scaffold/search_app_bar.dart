@@ -5,6 +5,7 @@ import 'package:flutter_utils/common/constants.dart';
 import 'package:flutter_utils/common/dimens.dart';
 import 'package:flutter_utils/common/main_theme_data.dart';
 import 'package:flutter_utils/utils/utils.dart';
+import 'package:flutter_utils/widget/custom_scaffold/search_bar_controller.dart';
 import 'package:get/get.dart';
 
 import '../widgets.dart';
@@ -57,6 +58,8 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// 是否需要右侧默认按钮，仅在 [isSearch == true] 时生效
   final bool needDefaultRightAction;
 
+  final SearchBarController? controller;
+
   /// 列表页面使用，搜索框不可输入
   const SearchAppBar({
     Key? key,
@@ -73,7 +76,7 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onSearchBoxTap,
     this.onSearch,
     this.isSearch = false,
-    this.needDefaultRightAction = true,
+    this.needDefaultRightAction = true, this.controller,
   })  : assert(onSearchBoxTap == null || isSearch == false),
         assert((onSearch != null && isSearch == true) || isSearch == false),
         super(key: key);
@@ -88,16 +91,16 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SearchAppBarState extends State<SearchAppBar> {
   late TextEditingController _editingController;
 
-  late FocusNode _focusNode;
-
   bool searchInputHasValue = false;
+
+  late SearchBarController _controller;
 
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
+    _controller = widget.controller ?? SearchBarController()..init();
     _initFocusNode();
-    _editingController = TextEditingController()
+    _editingController = _controller.editingController
       ..addListener(() {
         searchInputHasValue = _editingController.text.isNotEmpty;
         setState(() {});
@@ -106,17 +109,23 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   _initFocusNode() async {
     await Future.delayed(Duration(milliseconds: 100));
-    FocusScope.of(context).requestFocus(_focusNode);
+    _controller.focus(context);
     setState(() {});
   }
 
   _onSearch() {
-    _focusNode.unfocus();
+    _controller.unFocus();
     if (_editingController.text.isEmpty && !widget.searchHint.contains('搜索')) {
       _editingController.text = widget.searchHint;
       setState(() {});
     }
     widget.onSearch!(_editingController.text);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -160,43 +169,42 @@ class _SearchAppBarState extends State<SearchAppBar> {
     return Container(
       color: Colors.transparent,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: Dimens.pd12),
-        child: Stack(
-          children: [
-            TextField(
-              style: TextStyle(fontSize: Dimens.font_size_16),
-              decoration: InputDecoration(
-                fillColor: Color(0xFFF5F5F5),
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0x00FF0000)),
-                    borderRadius: BorderRadius.all(Radius.circular(4))),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0x00000000)),
-                    borderRadius: BorderRadius.all(Radius.circular(4))),
-                hintText: widget.searchHint,
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: Dimens.pd4, horizontal: Dimens.pd16),
-                suffixIcon: searchInputHasValue
-                    ? IconButton(
-                        onPressed: () {
-                          _editingController.clear();
-                        },
-                        icon: Icon(
-                          Icons.cancel,
-                          size: Dimens.font_size_16,
-                          color: Color(0xFFB3B3B3),
-                        ))
-                    : emptyWidget,
-              ),
-              textInputAction: TextInputAction.search,
-              focusNode: _focusNode,
-              controller: _editingController,
-              onSubmitted: (value) {
-                _onSearch();
-              },
-            ),
-          ],
+        padding: EdgeInsets.symmetric(horizontal: Dimens.pd8, vertical: Dimens.pd12),
+        child: TextField(
+          style: TextStyle(fontSize: Dimens.font_size_14),
+          decoration: InputDecoration(
+            fillColor: Color(0xFFF5F5F5),
+            filled: true,
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0x00FF0000)),
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0x00000000)),
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            hintText: widget.searchHint,
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: Dimens.pd12),
+            suffixIcon: searchInputHasValue
+                ? IconButton(
+                    onPressed: () {
+                      _editingController.clear();
+                    },
+                    icon: Icon(
+                      Icons.cancel,
+                      size: Dimens.font_size_16,
+                      color: Color(0xFFB3B3B3),
+                    ))
+                : emptyWidget,
+          ),
+          textInputAction: TextInputAction.search,
+          focusNode: _controller.focusNode,
+          controller: _editingController,
+          onChanged: (value) {
+
+          },
+          onSubmitted: (value) {
+            _onSearch();
+          },
         ),
       ),
     );

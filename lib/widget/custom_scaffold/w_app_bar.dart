@@ -12,7 +12,7 @@ class WAppBar extends StatefulWidget implements PreferredSizeWidget {
   final WAppBarTitleConfig? titleConfig;
 
   /// 标题自定义，优先级高于 [titleConfig]
-  final Widget? buildTitle;
+  final Widget Function(BuildContext context)? buildTitle;
 
   /// 标题栏底色
   final Color? backgroundColor;
@@ -67,9 +67,7 @@ class _WAppBarState extends State<WAppBar> {
   @override
   Widget build(BuildContext context) {
     final SystemUiOverlayStyle overlayStyle =
-        widget.brightness == Brightness.dark
-            ? SystemUiOverlayStyle.light
-            : SystemUiOverlayStyle.dark;
+        widget.brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayStyle,
@@ -92,10 +90,13 @@ class _WAppBarState extends State<WAppBar> {
         child: Container(
           height: 57,
           child: Stack(
+            alignment: (widget.titleConfig == null || widget.titleConfig!.centerTitle) ? Alignment.center : Alignment.centerLeft,
             children: [
-              Center(
-                child: widget.titleConfig == null ? emptyWidget : _buildTitle(),
-              ),
+              widget.buildTitle != null
+                  ? widget.buildTitle!(context)
+                  : widget.titleConfig == null
+                      ? emptyWidget
+                      : _buildTitle(),
               _buildBack(),
               _buildRightAction(),
             ],
@@ -106,14 +107,15 @@ class _WAppBarState extends State<WAppBar> {
   }
 
   Widget _buildTitle() {
-    return Text(
-      widget.titleConfig!.title,
-      style: TextStyle(
-        color: widget.titleConfig!.titleColor != null
-            ? widget.titleConfig!.titleColor!
-            : Colors.black,
-        fontSize: Dimens.font_size_16,
-        fontWeight: FontWeight.w600,
+    return Container(
+      padding: widget.titleConfig!.centerTitle ? null : EdgeInsets.only(left: 60),
+      child: Text(
+        widget.titleConfig!.title,
+        style: TextStyle(
+          color: widget.titleConfig!.titleColor != null ? widget.titleConfig!.titleColor! : Colors.black,
+          fontSize: Dimens.font_size_16,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -129,17 +131,13 @@ class _WAppBarState extends State<WAppBar> {
             color: Colors.transparent,
             clipBehavior: Clip.antiAlias,
             child: IconButton(
-                color: widget.backColor != null
-                    ? widget.backColor
-                    : Colors.black,
+                color: widget.backColor != null ? widget.backColor : Colors.black,
                 onPressed: widget.onClickBackBtn != null
                     ? widget.onClickBackBtn
                     : () {
                         Get.back();
                       },
-                icon: widget.backIcon != null
-                    ? widget.backIcon!
-                    : BackButtonIcon()),
+                icon: widget.backIcon != null ? widget.backIcon! : BackButtonIcon()),
           ),
         ),
       );
@@ -148,7 +146,10 @@ class _WAppBarState extends State<WAppBar> {
         left: 0,
         child: SizedBox(
           height: 57,
-          child: Center(child: Builder(builder: widget.backWidget!,)),
+          child: Center(
+              child: Builder(
+            builder: widget.backWidget!,
+          )),
         ),
       );
     else
@@ -171,9 +172,11 @@ class _WAppBarState extends State<WAppBar> {
 class WAppBarTitleConfig {
   String title;
   Color? titleColor;
+  bool centerTitle;
 
   WAppBarTitleConfig({
     required this.title,
     this.titleColor,
+    this.centerTitle = true,
   });
 }

@@ -176,12 +176,15 @@ class CustomListItem extends StatelessWidget {
                       if (leadingIcon != null)
                         Container(
                           alignment: Alignment.centerLeft,
-                          width: minLeadingWidth,
+                          constraints: BoxConstraints(
+                            minWidth: minLeadingWidth!,
+                          ),
                           child: leadingIcon,
                         ),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                               titleText,
                             if (subtitleText != null)

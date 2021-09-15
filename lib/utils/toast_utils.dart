@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_utils/common/constants.dart';
 import 'package:flutter_utils/common/dimens.dart';
 import 'package:flutter_utils/widget/custom_divider.dart';
+import 'package:flutter_utils/widget/custom_text.dart';
 import 'package:flutter_utils/widget/list_item_widget.dart';
+import 'package:flutter_utils/widget/widgets.dart';
 import 'package:get/get.dart';
 
 /// 显示loading
@@ -138,7 +140,7 @@ showBottomMenuDialog(BuildContext context, List menuList, void Function(int, Str
                         padding: EdgeInsets.symmetric(vertical: Dimens.pd12),
                         child: Center(
                             child: Text(
-                              menuList[index]['title'],
+                          menuList[index]['title'],
                           style: TextStyle(
                               color: Colors.black, fontSize: Dimens.font_size_16, fontWeight: FontWeight.w300),
                         ))),

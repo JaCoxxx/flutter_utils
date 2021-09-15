@@ -4,8 +4,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_utils/common/constants.dart';
 import 'package:flutter_utils/common/main_theme_data.dart';
 import 'package:flutter_utils/pages/main/my_app.dart';
+import 'package:flutter_utils/pages/wrapper/bloc_wrapper.dart';
 import 'package:flutter_utils/utils/request.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -19,12 +21,12 @@ void main() {
   }
   MainThemeData.init(MainThemeData.lightTheme);
 
-  AudioPlayer.logEnabled = true;
+  // AudioPlayer.logEnabled = true;
 
   Request().setEnableDebugPrint(true);
 
-  EasyRefresh.defaultHeader = BezierCircleHeader();
-  EasyRefresh.defaultFooter = BezierBounceFooter();
+  EasyRefresh.defaultHeader = BezierCircleHeader(backgroundColor: Colors.transparent, color: Colors.blue);
+  EasyRefresh.defaultFooter = BezierBounceFooter(backgroundColor: Colors.transparent, color: Colors.blue);
 
-  runApp(MyApp());
+  runApp(BlocWrapper(child: MyApp()));
 }
