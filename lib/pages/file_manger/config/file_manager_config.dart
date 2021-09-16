@@ -1,11 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_utils/common/dimens.dart';
 import 'package:flutter_utils/common/model/local_file_item_model.dart';
 import 'package:flutter_utils/common/strings.dart';
 import 'package:flutter_utils/pages/file_manger/model/file_setting_model.dart';
+import 'package:flutter_utils/pages/file_manger/widget/file_detail_dialog_widget.dart';
 import 'package:flutter_utils/utils/cache_utils.dart';
+import 'package:flutter_utils/utils/clear_cache_utils.dart';
+import 'package:flutter_utils/utils/utils.dart';
+import 'package:flutter_utils/widget/custom_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 /// jacokwu
 /// 9/10/21 3:31 PM
@@ -56,14 +63,10 @@ class FileManagerConfig {
     }
   }
 
-  static void showBottomDetailDialog(BuildContext context, LocalFileItemModel itemModel) {
-    showBottomSheet(
+  static void showBottomDetailDialog(BuildContext context, LocalFileItemModel itemModel) async {
+    showDialog(
         context: context,
-        builder: (_) => BottomSheet(
-            onClosing: () {},
-            builder: (_) => Container(
-                  child: Text('data'),
-                )));
+        builder: (_) => FileDetailDialogWidget(itemModel: itemModel));
   }
 
   static Future<void> saveSetting(FileSettingModel value) async {

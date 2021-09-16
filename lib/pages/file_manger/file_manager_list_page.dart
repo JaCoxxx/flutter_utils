@@ -11,6 +11,7 @@ import 'package:flutter_utils/pages/file_manger/config/file_manager_config.dart'
 import 'package:flutter_utils/pages/file_manger/file_manager_bottom_action.dart';
 import 'package:flutter_utils/pages/file_manger/file_manager_setting_page.dart';
 import 'package:flutter_utils/pages/file_manger/model/file_setting_model.dart';
+import 'package:flutter_utils/utils/dialog_utils.dart';
 import 'package:flutter_utils/utils/toast_utils.dart';
 import 'package:flutter_utils/utils/utils.dart';
 import 'package:flutter_utils/widget/custom_divider.dart';
@@ -137,7 +138,8 @@ class _FileManagerListPageState extends State<FileManagerListPage> {
       _currentPath = itemModel.file.path;
       _getCurrentDir();
     } else {
-      OpenFile.open(itemModel.file.path, type: FileManagerConfig.fileOpenType['.${(itemModel.suffix ?? '').toLowerCase()}']);
+      OpenFile.open(itemModel.file.path,
+          type: FileManagerConfig.fileOpenType['.${(itemModel.suffix ?? '').toLowerCase()}']);
       // print(itemModel.file.resolveSymbolicLinksSync());
       // print(itemModel.file.uri);
       // print(itemModel.file.statSync().size);
@@ -156,6 +158,29 @@ class _FileManagerListPageState extends State<FileManagerListPage> {
         ..add(itemModel);
     }
     setState(() {});
+  }
+
+  _createNewFolder() async {
+    showBottomInputDialog(context, title: '新建文件夹', initialValue: '新建文件夹', onConfirm: (value) async {
+      if (isStringEmpty(value)) {
+        showToast('请输入文件夹名称');
+      } else {
+        var file = Directory('$_currentPath/$value');
+        try {
+          bool exists = await file.exists();
+          if (!exists) {
+            await file.create();
+            showToast('新建成功');
+            Get.back();
+            _getCurrentDir();
+          } else {
+            showToast('文件夹已存在');
+          }
+        } catch (e) {
+          print(e);
+        }
+      }
+    });
   }
 
   @override
@@ -214,6 +239,10 @@ class _FileManagerListPageState extends State<FileManagerListPage> {
                         value: 'setting',
                         child: CustomText.title('设置'),
                       ),
+                      PopupMenuItem<String>(
+                        value: 'new',
+                        child: CustomText.title('新建文件夹'),
+                      ),
                     ];
                   },
                   onSelected: (value) async {
@@ -222,6 +251,9 @@ class _FileManagerListPageState extends State<FileManagerListPage> {
                       case 'setting':
                         await Get.to(FileManagerSettingPage());
                         _initData();
+                        break;
+                      case 'new':
+                        await _createNewFolder();
                         break;
                       default:
                         break;
@@ -240,7 +272,16 @@ class _FileManagerListPageState extends State<FileManagerListPage> {
                         ? _buildListLayout()
                         : _buildGridLayout(),
               ),
-              if (_showBottomAction) FileManagerBottomAction(selectedFileList: _selectedList,),
+              if (_showBottomAction)
+                FileManagerBottomAction(
+                  selectedFileList: _selectedList,
+                  refresh: () {
+                    _showMultiSelector = false;
+                    _showBottomAction = false;
+                    _selectedList.clear();
+                    _getCurrentDir();
+                  },
+                ),
             ],
           ),
         ),
@@ -297,7 +338,8 @@ class _FileManagerListPageState extends State<FileManagerListPage> {
 
   Widget _buildListFileWidget(LocalFileItemModel itemModel) {
     return CustomListItem(
-      backgroundColor: _showMultiSelector && _selectedList.contains(itemModel) ? Constants.lightLineColor : Colors.white,
+      backgroundColor:
+          _showMultiSelector && _selectedList.contains(itemModel) ? Constants.lightLineColor : Colors.white,
       title: _buildTitleWidget(itemModel.fileName),
       subtitle: _buildSubTitle(itemModel),
       leading: Icon(itemModel.isFolder ? FontAwesomeIcons.folder : FileManagerConfig.getFileIcon(itemModel.suffix)),

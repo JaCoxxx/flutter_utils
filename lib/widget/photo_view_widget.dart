@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_utils/common/dimens.dart';
+import 'package:flutter_utils/utils/dialog_utils.dart';
 import 'package:flutter_utils/utils/toast_utils.dart';
 import 'package:flutter_utils/utils/utils.dart';
 import 'package:get/get.dart';

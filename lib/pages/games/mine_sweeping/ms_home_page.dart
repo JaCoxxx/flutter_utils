@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_utils/common/dimens.dart';
-import 'package:flutter_utils/utils/toast_utils.dart';
+import 'package:flutter_utils/utils/dialog_utils.dart';
 import 'package:get/get.dart';
 
 import 'ms_config.dart';

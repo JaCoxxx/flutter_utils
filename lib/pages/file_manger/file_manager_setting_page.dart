@@ -5,6 +5,8 @@ import 'package:flutter_utils/common/constants.dart';
 import 'package:flutter_utils/common/dimens.dart';
 import 'package:flutter_utils/pages/file_manger/config/file_manager_config.dart';
 import 'package:flutter_utils/pages/file_manger/model/file_setting_model.dart';
+import 'package:flutter_utils/utils/dialog_utils.dart';
+import 'package:flutter_utils/utils/toast_utils.dart';
 import 'package:flutter_utils/widget/custom_scaffold/w_app_bar.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -70,6 +72,15 @@ class _FileManagerSettingPageState extends State<FileManagerSettingPage> {
                     _setSettingValue();
                   },
                   switchValue: _settingValue.fileLayoutType,
+                ),
+                SettingsTile(
+                  title: '恢复默认设置',
+                  onPressed: (_) {
+                    showSimpleAlertDialog(context, content: '确定恢复默认设置吗?', showCancel: true, confirmFunc: () {
+                      _settingValue = FileManagerConfig.defaultSettingValue;
+                      _setSettingValue();
+                    });
+                  },
                 ),
               ],
             ),

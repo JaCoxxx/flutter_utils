@@ -36,14 +36,17 @@ class _PublicBottomPlayWidgetState extends State<PublicBottomPlayWidget> {
     super.initState();
     _controller = BlocProvider.of<AudioControllerBloc>(context).state.audioPlayController
       ..init()
-      ..addListener(() {
-        setState(() {});
-      });
+      ..addListener(_bindListener);
+  }
+
+  _bindListener() {
+    setState(() {});
   }
 
   @override
   void dispose() {
     super.dispose();
+    _controller.removeListener(_bindListener);
   }
 
   @override

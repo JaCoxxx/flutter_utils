@@ -46,6 +46,7 @@ class _CoverShowWidgetState extends State<CoverShowWidget>
 
   @override
   void dispose() {
+    _controller.stop();
     super.dispose();
     _audioPlayController.removeListener(_bindListener);
     _controller.dispose();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_utils/common/dimens.dart';
 import 'package:flutter_utils/common/model/sudoku_detail_model.dart';
 import 'package:flutter_utils/pages/juhe/page/sudoku/sudoku_config.dart';
-import 'package:flutter_utils/utils/toast_utils.dart';
+import 'package:flutter_utils/utils/dialog_utils.dart';
 import 'package:get/get.dart';
 
 /// jacokwu

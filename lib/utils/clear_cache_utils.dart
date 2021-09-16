@@ -11,7 +11,7 @@ class ClearCacheUtil {
     Directory tempDir = await getTemporaryDirectory();
     // ignore: unnecessary_null_comparison
     if (tempDir == null) return 0;
-    int total = await _reduce(tempDir);
+    int total = await reduce(tempDir);
     return total;
   }
 
@@ -24,7 +24,7 @@ class ClearCacheUtil {
   }
 
   /// 递归缓存目录，计算缓存大小
-  static Future<int> _reduce(final FileSystemEntity file) async {
+  static Future<int> reduce(final FileSystemEntity file) async {
     /// 如果是一个文件，则直接返回文件大小
     if (file is File) {
       int length = await file.length();
@@ -39,7 +39,7 @@ class ClearCacheUtil {
 
       if (children.isNotEmpty)
         for (final FileSystemEntity child in children)
-          total += await _reduce(child);
+          total += await reduce(child);
 
       return total;
     }
